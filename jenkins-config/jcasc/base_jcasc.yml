@@ -1,0 +1,6 @@
+jenkins:
+  # Disable harmless warnings that were cluttering the manage screen
+  disabledAdministrativeMonitors:
+    - "jenkins.security.csrf.CSRFAdministrativeMonitor"
+    - "hudson.diagnosis.TooManyJobsButNoView"
+    - "jenkins.diagnostics.RootUrlNotSetMonitor"

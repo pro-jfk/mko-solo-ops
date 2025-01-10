@@ -1,0 +1,12 @@
+jenkins:
+  numExecutors: 5
+  clouds:
+    - kubernetes:
+        name: "${KUBERNETES_CLOUD_NAME}"
+        namespace: "${KUBERNETES_NAMESPACE}"
+        serverUrl: "${KUBERNETES_SERVER_URL}"
+        serverCertificate: "${KUBERNETES_SERVER_CERT_KEY}"
+        credentialsId: "harborn_kubernetes"
+        jenkinsUrl: "${KUBERNETES_JENKINS_POD_URL}"
+        containerCap: 5
+        containerCapStr: "5"

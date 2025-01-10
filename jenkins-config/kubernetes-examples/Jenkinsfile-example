@@ -1,0 +1,17 @@
+pipeline {
+    agent {
+        kubernetes {
+            cloud "kubernetes"
+            inheritFrom "basic-pod" // From the pod template "basic-pod"
+        }
+    }
+    stages {
+        stage('Run shell') {
+            steps {
+                script {
+                    sh 'echo hello world'
+                }
+            }
+        }
+    }
+}

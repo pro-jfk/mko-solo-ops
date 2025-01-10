@@ -1,0 +1,70 @@
+jenkins:
+  authorizationStrategy:
+    roleBased:
+      roles:
+        global:
+          - name: "admin"
+            entries:
+              - user: "admin"
+              - user: "${JENKINS_ADMIN_USER}"
+              - group: "${JENKINS_ADMIN_GROUP}"
+            permissions:
+              - "Overall/Administer"
+          - name: "developers"
+            entries:
+            permissions:
+              - "Job/Move"
+              - "Job/Build"
+              - "View/Create"
+              - "Agent/Configure"
+              - "Job/Read"
+              - "Agent/Create"
+              - "Job/Delete"
+              - "Agent/Build"
+              - "View/Configure"
+              - "Agent/Provision"
+              - "SCM/Tag"
+              - "Job/Create"
+              - "Job/Discover"
+              - "Credentials/View"
+              - "Agent/Connect"
+              - "Agent/Delete"
+              - "Agent/Disconnect"
+              - "Run/Delete"
+              - "Job/Cancel"
+              - "Overall/Read"
+              - "Run/Update"
+              - "View/Delete"
+              - "Job/Configure"
+              - "Job/Workspace"
+              - "View/Read"
+          - name: "maintainers"
+            entries:
+            permissions:
+              - "Job/Move"
+              - "Job/Build"
+              - "View/Create"
+              - "Agent/Configure"
+              - "Job/Read"
+              - "Agent/Create"
+              - "Job/Delete"
+              - "Agent/Build"
+              - "View/Configure"
+              - "Agent/Provision"
+              - "SCM/Tag"
+              - "Job/Create"
+              - "Job/Discover"
+              - "Credentials/View"
+              - "Agent/Delete"
+              - "Agent/Disconnect"
+              - "Run/Delete"
+              - "Job/Cancel"
+              - "Overall/Read"
+              - "Run/Update"
+              - "View/Delete"
+              - "Job/Configure"
+              - "Job/Workspace"
+              - "View/Read"
+  projectNamingStrategy:
+    roleBased:
+      forceExistingJobs: false

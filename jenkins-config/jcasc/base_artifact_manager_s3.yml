@@ -1,0 +1,15 @@
+unclassified:
+  artifactManager:
+    artifactManagerFactories:
+      - jclouds:
+          provider: s3
+
+aws:
+  awsCredentials:
+    credentialsId: "s3_artifacts_credentials"
+    region: "eu-west-1"
+
+  s3:
+    container: "${AWS_CREDENTIALS_S3_BUCKET_NAME}"
+    prefix: "jenkins/"
+    useHttp: false
