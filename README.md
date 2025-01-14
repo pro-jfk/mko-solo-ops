@@ -13,12 +13,91 @@ Our goal is to make these concepts approachable by enabling you to practice almo
 
 After all, running Kubernetes locally is already more than most solo projects demand—but that’s what makes it a great playground for learning.
 
-Before diving into this guide, you should have a foundational understanding of the following concepts:
+---
 
-- **Basic Programming Skills**  
-    You should be comfortable with concepts like object-oriented programming (OOP), functional programming, loops, and variables—they should feel like second nature.
-- **Basic Understanding of Docker**  
-    Familiarity with containerization, especially Docker, is essential. While Docker is a prominent tool, the broader concept of containerization plays a pivotal role in modern cloud infrastructure.
-- **Basic Understanding of Systems**  
-    A general grasp of system components like servers, databases, and how they interact is important. For example, you should know what a server does, what a database is, and how they form the backbone of most applications.
+## **Lab: From Code to Consumer - Deploying, Managing and Observing an app _locally_**
 
+this basically what we'll do:
+
+1. we'll setup the cluster and all services need to work for anyting steps further below.
+2. In jenkins, when building a project a "job" must be created.
+3. the gitops flow we simulate: push to main -> build gets triggered -> project gets build -> gets pushed to respective place
+
+## Kubernetes
+
+Kubernetes (often called "K8s") is a **tool to manage applications** that are made up of multiple containers.
+
+If you're familiar with Docker Compose, think of Kubernetes as working on the same principle, but with significantly more power and flexibility for managing complex, large-scale applications.
+
+To run Kubernetes locally, there are several options: Minikube, Kind, Docker Desktop, K3s, and Microk8s.
+This guide will use Minikube because it offers a straightforward setup and is highly configurable, making it ideal for beginners and advanced users alike.
+
+Install steps: [Get started](https://minikube.sigs.k8s.io/docs/start/)
+
+Kubernetes is meant to manage multiple apps at once, so we also have to automate the Docker Build process using Pipelines.
+Pipelines can be used for building, testing and pushing to any other artifact managers.
+
+In this example we'll be using Jenkins.
+
+1. Again highly configurable
+2.
+
+### **Step 1: Set Up Cloud Infrastructure with OpenTofu (Terraform)**
+
+#### **1.1 Install  (Terraform)**
+
+
+#### **1.3 Provision Infrastructure**
+
+Run the following commands to initialize and apply the configuration:
+```bash
+terraform init
+terraform apply
+```
+or
+```bash
+tofu init
+tofu apply
+```
+
+After applying, you can get the Kubernetes credentials for `kubectl` access:
+
+
+---
+
+### **Step 2: Build and Publish Docker Images to Azure Container Registry**
+
+
+DockerHub or GitHub registery
+
+---
+
+
+---
+
+### **Step 4: Set Up CI/CD Pipeline**
+
+#### **4.1 Create  Pipeline**
+
+
+#### **5.1 Install Jenkins**
+
+
+---
+
+### **(OPtiONAL)Step 6: Monitor Your Application with Prometheus and Grafana**
+
+To manage production workloads, monitoring is crucial.
+
+#### **6.1 Install Prometheus and Grafana**
+
+1. Install **Prometheus** and **Grafana** in your AKS cluster using Helm:
+
+   ```bash
+   helm install prometheus prometheus-community/kube-prometheus-stack
+   helm install grafana grafana/grafana
+   ```
+
+2. Access Prometheus and Grafana dashboards to monitor application health, resource usage, etc.
+
+---

@@ -5,7 +5,7 @@ install=(
     "artifact-manager-s3"
     "basic-branch-build-strategies"
     "build-timeout"
-    "cloudbees-folder"    
+    "cloudbees-folder"
     "command-launcher"
     "configuration-as-code"
     "copyartifact"
