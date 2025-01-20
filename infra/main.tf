@@ -18,6 +18,7 @@ resource "minikube_cluster" "docker" {
     "default-storageclass",
     "storage-provisioner"
   ]
+  cni = "bridge"
 }
 
 provider "kubernetes" {
@@ -29,7 +30,9 @@ provider "kubernetes" {
 
 resource "kubernetes_deployment" "nginx" {
   metadata {
-    name = "nginx-loadbalancer"
+    name      = "nginx-loadbalancer"
+    namespace = kubernetes_namespace.jenkins.metadata[0].name
+
     labels = {
       App = "Nginx-LoadBalancer"
     }
@@ -37,6 +40,7 @@ resource "kubernetes_deployment" "nginx" {
 
   spec {
     replicas = 1
+
     selector {
       match_labels = {
         App = "Nginx-LoadBalancer"
@@ -78,7 +82,8 @@ resource "kubernetes_deployment" "nginx" {
 
 resource "kubernetes_service" "nginx_service" {
   metadata {
-    name = "nginx-service"
+    name      = "nginx-service"
+    namespace = kubernetes_namespace.jenkins.metadata[0].name
     labels = {
       App = "Nginx-LoadBalancer"
     }
@@ -101,13 +106,15 @@ resource "kubernetes_service" "nginx_service" {
 
 resource "kubernetes_config_map" "nginx_config" {
   metadata {
-    name = "nginx-config"
+    name      = "nginx-config"
+    namespace = kubernetes_namespace.jenkins.metadata[0].name
+
   }
 
   data = {
     "default.conf" = <<-EOT
       server {
-          listen 443;
+          listen 80;
 
           location / {
               proxy_pass http://jenkins-service:8080;
@@ -129,7 +136,8 @@ resource "kubernetes_config_map" "nginx_config" {
 
 resource "kubernetes_deployment" "jenkins" {
   metadata {
-    name = "jenkins"
+    name      = "jenkins"
+    namespace = kubernetes_namespace.jenkins.metadata[0].name
     labels = {
       App = "Jenkins"
     }
@@ -149,7 +157,9 @@ resource "kubernetes_deployment" "jenkins" {
         }
       }
       spec {
+
         service_account_name = kubernetes_service_account.jenkins.metadata[0].name
+
         container {
           name  = "jenkins"
           image = "projfk/jenkins:latest"
@@ -168,10 +178,10 @@ resource "kubernetes_deployment" "jenkins" {
             value = var.JENKINS_ADMIN_PASSWD
           }
 
-          env {
-            name  = "KUBERNETES_CLOUD_NAME"
-            value = var.KUBERNETES_CLOUD_NAME
-          }
+          #env {
+          # name  = "KUBERNETES_CLOUD_NAME"
+          # value = var.KUBERNETES_CLOUD_NAME
+          #}
 
           #   env {
           #     name  = "KUBERNETES_SERVER_URL"
@@ -184,6 +194,7 @@ resource "kubernetes_deployment" "jenkins" {
 
           port {
             container_port = 50000
+
           }
 
 
@@ -215,11 +226,19 @@ resource "kubernetes_deployment" "jenkins" {
     }
 
   }
+  depends_on = [kubernetes_service_account.jenkins]
+}
+
+resource "kubernetes_namespace" "jenkins" {
+  metadata {
+    name = "jenkins"
+  }
 }
 
 resource "kubernetes_service" "jenkins" {
   metadata {
-    name = "jenkins-service"
+    name      = "jenkins-service"
+    namespace = kubernetes_namespace.jenkins.metadata[0].name
     labels = {
       App = "Jenkins"
     }
@@ -234,59 +253,62 @@ resource "kubernetes_service" "jenkins" {
       protocol    = "TCP"
       port        = 8080
       target_port = 8080
+      node_port   = 32000
+
     }
 
-    type = "ClusterIP"
+    type = "NodePort"
   }
 }
 
 resource "kubernetes_service_account" "jenkins" {
   metadata {
     name      = "jenkins-service-account"
-    namespace = "default"
+    namespace = kubernetes_namespace.jenkins.metadata[0].name
   }
 }
 
-resource "kubernetes_role" "jenkins" {
+resource "kubernetes_cluster_role" "jenkins" {
+
   metadata {
-    name      = "jenkins-role"
-    namespace = "default"
+    name = "jenkins-role"
+
   }
 
   rule {
-    api_groups = [""]
-    resources  = ["pods", "services", "endpoints", "configmaps", "secrets", "deployments", "pods/exec", "pods/log","persistentvolumeclaims"]
-    verbs      = ["get", "list", "watch", "create", "update", "delete"]
+    api_groups = ["*"]
+    resources  = ["*"]
+    verbs      = ["*"]
   }
 }
 
 resource "kubernetes_role_binding" "jenkins" {
   metadata {
     name      = "jenkins-role-binding"
-    namespace = "default"
+    namespace = kubernetes_namespace.jenkins.metadata[0].name
   }
 
   role_ref {
     api_group = "rbac.authorization.k8s.io"
-    kind      = "Role"
-    name      = kubernetes_role.jenkins.metadata[0].name
+    kind      = "ClusterRole"
+    name      = kubernetes_cluster_role.jenkins.metadata[0].name
   }
 
   subject {
     kind      = "ServiceAccount"
     name      = kubernetes_service_account.jenkins.metadata[0].name
-    namespace = kubernetes_service_account.jenkins.metadata[0].namespace
+    namespace = kubernetes_namespace.jenkins.metadata[0].name
   }
 }
 
 resource "kubernetes_secret" "jenkins_sa_token" {
   metadata {
     name      = "jenkins-sa-token"
-    namespace = "default"
+    namespace = kubernetes_namespace.jenkins.metadata[0].name
     annotations = {
       "kubernetes.io/service-account.name" = kubernetes_service_account.jenkins.metadata[0].name
     }
   }
-
-  type = "kubernetes.io/service-account-token"
+  depends_on = [kubernetes_service_account.jenkins]
+  type       = "kubernetes.io/service-account-token"
 }
