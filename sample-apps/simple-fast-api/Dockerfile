@@ -7,6 +7,12 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 COPY ./requirements.txt /src/requirements.txt
+RUN set -eux \
+    && apk add -y --no-cache curl \
+    gcc \
+    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+    && source $HOME/.cargo/env
+
 
 RUN set -eux \
     && apk add --no-cache --virtual .build-deps build-base \

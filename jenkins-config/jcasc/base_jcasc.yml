@@ -1,5 +1,6 @@
 jenkins:
   # Disable harmless warnings that were cluttering the manage screen
+  authorizationStrategy: "loggedInUsersCanDoAnything"
   disabledAdministrativeMonitors:
     - "jenkins.security.csrf.CSRFAdministrativeMonitor"
     - "hudson.diagnosis.TooManyJobsButNoView"
