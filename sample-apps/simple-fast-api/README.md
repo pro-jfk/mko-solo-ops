@@ -1,139 +1,35 @@
+This application is a simple, lightweight Book Management API built with FastAPI and SQLAlchemy.
 
+http://0.0.0.0:8000/docs
 
-Install the project dependencies:
+### GET /
 
-```bash
-pip install -r requirements.txt
-```
+The root endpoint that returns a welcome greeting.
 
-Run the application:
+### GET /create_book
 
-```bash
-uvicorn main:app --reload
-```
+This endpoint displays the form for creating a new book.
 
-The application will start and be available at http://localhost:8000.
+### POST /books
 
-## API Endpoints
+This endpoint creates a new book with the provided title, author, and description. On success, it redirects to the /books endpoint.
 
-### Retrieve a list of users:
+### GET /books
 
-```http
-GET /users
-```
+This endpoint lists all the books in the collection.
 
-Returns a list of all users in the system:
+### GET /books/{book_id}
 
-```console
-curl http://localhost:8000/users/ -H "Accept: application/json"
-```
-Response:
+This endpoint displays the details of a single book specified by the book_id.
 
-```json
-[
-    {
-        "email": "alice@example.com",
-        "id": 1,
-        "password": "password1",
-        "name": "Alice"
-    },
-    {
-        "email": "bob@example.com",
-        "id": 2,
-        "password": "password2",
-        "name": "Bob"
-    },
-    {
-        "email": "charlie@example.com",
-        "id": 3,
-        "password": "password3",
-        "name": "Charlie"
-    }
-]
-```
+### GET /books/{book_id}/update
 
-### Retrieve details for a specific user:
+This endpoint displays a form for updating the details of a single book specified by the book_id.
 
-```http
-GET /users/{user_id}
-```
-Returns details for a specific user with the given user_id:
+### POST /books/{book_id}/update
 
-```console
-curl http://localhost:8000/users/1 -H "Accept: application/json"
-```
-Response:
-```json
-{
-    "email": "alice@example.com",
-    "id": 1,
-    "password": "password1",
-    "name": "Alice"
-}
-```
+This endpoint accepts form data and updates the details of the specified book. On success, it redirects to the book detail view of the updated book.
 
-### Add a new user
+### DELETE /books/{book_id}
 
-```http
-POST /users
-```
-
-Adds a new user to the system. The request body should include a JSON object with the following properties:
-
-  - `name` (string, required): the name of the user
-  - `email` (string, required): the email address of the user
-  - `password` (string, required): the password for the user
-
-```console
-curl -X POST http://localhost:8000/users/
-   -H 'Content-Type: application/json'
-   -d '{"name":"Ali","password":"123456", "email": "AliAhmadi@gmail.com"}'
-```
-Response:
-
-```json
-{
-    "email": "AliAhmadi@gmail.com",
-    "password": "123456",
-    "id": 4,
-    "name": "Ali"
-}
-```
-
-
-### Update an existing user
-```http
-PUT /users/{user_id}
-```
-
-Updates an existing user with the given user_id. The request body should include a JSON object with the following properties:
-
-  -  `name` (string): the new name for the user
-  -  `email` (string): the new email address for the user
-
-```console
-curl -X PUT http://localhost:8000/users/1
-     -H "Accept: application/json"
-     -d '{"name": "Reza", "email": "reza@yahoo.com"}'
-```
-Response:
-```json
-{"message": "User updated successfully"}
-```
-
-### Delete a user
-
-```http
-DELETE /users/{user_id}
-```
-
-Deletes the user with the given user_id:
-
-```console
-curl -X DELETE http://localhost:8000/2
-```
-
-Response:
-```json
-{"message": "User deleted successfully"}
-```
+This endpoint deletes the specified book from the collection.

@@ -1,25 +1,32 @@
-FROM python:3.8.1-alpine
+# Use an official Python runtime as a parent image
+FROM python:3.9-slim-buster as builder
 
-WORKDIR /src
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-# set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# Set work directory
+WORKDIR /server
 
-COPY ./requirements.txt /src/requirements.txt
-RUN set -eux \
-    && apk add -y --no-cache curl \
-    gcc \
-    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
-    && source $HOME/.cargo/env
+# Install system dependencies and Python dependencies
+COPY ./server/requirements.txt /server/
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /server/wheels -r requirements.txt
 
+FROM python:3.9-slim-buster as runner
 
-RUN set -eux \
-    && apk add --no-cache --virtual .build-deps build-base \
-    libressl-dev libffi-dev gcc musl-dev python3-dev \
-    postgresql-dev \
-    && pip install --upgrade pip setuptools wheel \
-    && pip install -r /src/requirements.txt \
-    && rm -rf /root/.cache/pip
+WORKDIR /server
 
-COPY . /src/
+# Install system dependencies and Python dependencies
+COPY --from=builder /server/wheels /server/wheels
+COPY --from=builder /server/requirements.txt .
+RUN pip install --no-cache-dir /server/wheels/* \
+    && pip install --no-cache-dir uvicorn
+
+# Copy project
+COPY . /server/
+
+# Expose the port the app runs in
+EXPOSE 8000
+
+# Define the command to start the container
+CMD ["uvicorn", "server.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
