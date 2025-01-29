@@ -5,7 +5,7 @@ Getting started with industry-standard DevOps tools can be challenging for solo 
 1. Setting up a cluster or cloud platform is rarely necessary for solo projects and often adds unnecessary complexity.
 2. Many tools are paid or require a credit card, and free tiers often fail to deliver a realistic, hands-on experience.
 
-This guide is designed to lower the barrier to entry by focusing on two foundational areas of DevOps:
+This project is designed to lower the barrier to entry by focusing on two foundational areas of DevOps:
 
 - GitOps
 - CI/CD
@@ -14,16 +14,9 @@ The goal of this project is to make these concepts approachable by enabling you 
 
 After all, running Kubernetes locally is already more than most solo projects demand—but that’s what makes it a great playground for learning.
 
----
+## Quickstart
 
-This lab will walk you through the following:
-
-1. Cluster and Service Setup: We'll set up the cluster and all necessary services to enable the steps outlined below.
-2. Setup Jenkins.
-3. Simulating the GitOps Flow: We’ll simulate the following workflow:
-   Push to main → Build Triggered → Project Built → Artifact Pushed to its Destination.
-
-## Kubernetes
+### Kubernetes
 
 Kubernetes (often called "K8s") is a **tool to manage applications** that are made up of multiple containers.
 

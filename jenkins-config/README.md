@@ -1,22 +1,22 @@
 ## Environment Variables
 
-Harborn Jenkins is fully customized through environment variables, including access control and credentials. Below is a reference table containing the essential environment variables:
+This version of Jenkins is fully customized through environment variables, including access control and credentials. Below is a reference table containing the essential environment variables:
 
-| Environment Variables      | Description                                                                                                                                        |
-|----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| JENKINS_ADMIN_USERNAME     | The username for the local Jenkins User.                                                                                                           |
-| JENKINS_ADMIN_PASSWD       | The password for the local Jenkins User.
-| KUBERNETES_CLOUD_NAME      | Within Jenkins, the name of the cloud. Default is _kubernetes_                                                                                     |
-| KUBERNETES_SERVER_URL      | Kubernetes API address.                                                                                                                            |
-| KUBERNETES_NAMESPACE       | The namespace in which the pods will be created.                                                                                                   |
-| KUBERNETES_SA_TOKEN        | The token for the Kubernetes Service Account                                                                                                       |
-| KUBERNETES_SERVER_CERT_KEY | The server certificate stored in ca.cert                                                                                                     |
+| Environment Variables      | Description                                                    |
+| -------------------------- | -------------------------------------------------------------- |
+| JENKINS_ADMIN_USERNAME     | The username for the local Jenkins User.                       |
+| JENKINS_ADMIN_PASSWD       | The password for the local Jenkins User.                       |
+| KUBERNETES_CLOUD_NAME      | Within Jenkins, the name of the cloud. Default is _kubernetes_ |
+| KUBERNETES_SERVER_URL      | Kubernetes API address.                                        |
+| KUBERNETES_NAMESPACE       | The namespace in which the pods will be created.               |
+| KUBERNETES_SA_TOKEN        | The token for the Kubernetes Service Account                   |
+| KUBERNETES_SERVER_CERT_KEY | The server certificate stored in ca.cert                       |
 
 ## Build utilities
 
 ### Agents/Slaves/Builders
 
-Using the [_kubernetes_](https://plugins.jenkins.io/kubernetes/)-plugin, Jenkins Agents will be launched as Pods. The [_jenkins-builder-library_](https://github.com/Harborn-digital/jenkins-builder-library) houses all the configuration for these agents (including the pod templates). Currently there is a terraform, serverless and kaniko agent.
+Using the [_kubernetes_](https://plugins.jenkins.io/kubernetes/)-plugin, Jenkins Agents will be launched as Pods/
 This plugin also has some prerequisites for it to work correctly:
 
 - A Service Account with sufficient privileges, that are defined by a _Role(binding)_ (example at: kubernetes-examples/resources.yml)
@@ -31,9 +31,9 @@ config.json:
     "auths": {
 
         "https://index.docker.io/v1/": {
-            "auth": "harborn:123 -> base64 encoded",
+            "auth": "user:123 -> base64 encoded",
             "password": "123",
-            "username": "harborn"
+            "username": "user"
           }
         },
         "credStore": "ecr-login"
@@ -50,7 +50,6 @@ To address this concern, an alternative has been found, [kaniko](https://github.
 From the documentation:
 
 > The kaniko executor image is responsible for building an image from a Dockerfile and pushing it to a registry. Within the executor image, we extract the filesystem of the base image (the FROM image in the Dockerfile). We then execute the commands in the Dockerfile, snapshotting the filesystem in userspace after each one. After each command, we append a layer of changed files to the base image (if there are any) and update image metadata.
-
 
 To ensure a smooth setup, _docker-compose_ is advised. After installing it and configuring the necessary environment variables, run `docker compose up`. If `JENKINS_ADMIN_USERNAME` and `JENKINS_ADMIN_PASSWD` are not provided, a random admin user will be generated and it's credentials can be found in the logs or in the `/var/jenkins_casc/security-realm.yml` file.
 
@@ -98,7 +97,7 @@ Some things to watch out for when testing _kaniko_ locally:
 
 ## Plugins
 
-Jenkins can be fully customized using plugins to extend its functionality. To provision the plugins that Harborn needs, the `plugins_config.sh` script is provided. When adding a plugin, please ensure that you use its ID rather than the name of the plugin. You can find the plugin ID at https://plugins.jenkins.io/plugin-name. Here's how to use it:
+Jenkins can be fully customized using plugins to extend its functionality. To provision the plugins needed, the `plugins_config.sh` script is provided. When adding a plugin, please ensure that you use its ID rather than the name of the plugin. You can find the plugin ID at https://plugins.jenkins.io/plugin-name. Here's how to use it:
 
 Installing Plugins: To add a plugin, simply include it as a string in the `install` list in the script.
 
