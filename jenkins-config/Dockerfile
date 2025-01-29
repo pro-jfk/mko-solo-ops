@@ -24,5 +24,5 @@ ENV CASC_JENKINS_CONFIG=${CASC_JENKINS_CONFIG}
 ENV CASC_MERGE_STRATEGY=errorOnConflict
 COPY --chown=jenkins:jenkins ./jcasc ${CASC_JENKINS_CONFIG}
 
-COPY --chown=jenkins:jenkins ./docker-resources/bootstrap.sh /var/bootstrap.sh
-ENTRYPOINT ["/var/bootstrap.sh"]
+COPY --chown=jenkins:jenkins ./init.sh /var/init.sh
+ENTRYPOINT ["/var/init.sh"]
